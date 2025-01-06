@@ -13,7 +13,7 @@ async def on_ready():
     await bot.tree.sync()
     print(f"Logged in as {bot.user}")
 
-@bot.tree.command(name="avatar", description="このbotのアイコンを貼ります。")
+@tree.command(name="avatar", description="このbotのアイコンを貼ります。")
 async def avatar(interaction: discord.Interaction):
     await interaction.response.send_message("https://i.imgur.com/dU9gpoh.jpeg")
 
