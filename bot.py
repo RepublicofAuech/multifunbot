@@ -16,7 +16,7 @@ async def on_ready():
     await bot.tree.sync()
     print(f"{bot.user}の起動が完了しました")
 
-@tree.command(name="avatar", description="このbotのアイコンを貼ります。")
+@bot.tree.command(name="avatar", description="このbotのアイコンを貼ります。")
 async def avatar(interaction: discord.Interaction):
     await interaction.response.send_message("https://i.imgur.com/dU9gpoh.jpeg")
 
@@ -98,7 +98,7 @@ class PaginatorView(View):
             await interaction.response.defer()  # No action for the final view
         self.stop()  # Stop the current view
 
-@tree.command(name="shakehelp", description="アライトの基礎的なシェイクのやり方を教えます")
+@bot.tree.command(name="shakehelp", description="アライトの基礎的なシェイクのやり方を教えます")
 async def book(interaction: discord.Interaction):
     pages = [
         "**ピンチ・バルジを使った波紋みたいなシェイク**\nイメージGIF\nhttps://i.ibb.co/x6hYY4d/1130-2-Trim.gif",
