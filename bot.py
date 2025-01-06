@@ -4,9 +4,7 @@ from discord.ui import View, Button
 from discord import app_commands
 from flask import Flask, request
 import threading
-import os
 
-# Discord bot setup
 intents = discord.Intents.all()
 bot = discord.Client(intents=intents)
 tree = app_commands.CommandTree(bot)
@@ -14,14 +12,11 @@ tree = app_commands.CommandTree(bot)
 @bot.event
 async def on_ready():
     await bot.tree.sync()
-    print(f"{bot.user}の起動が完了しました")
+    print(f"Logged in as {bot.user}")
 
-@bot.tree.command(name="avatar", description="このbotのアイコンを貼ります。")
+@tree.command(name="avatar", description="このbotのアイコンを貼ります。")
 async def avatar(interaction: discord.Interaction):
     await interaction.response.send_message("https://i.imgur.com/dU9gpoh.jpeg")
-
-# Flask setup for the web server
-app = Flask(__name__)
 
 
 class PaginatorView(View):
@@ -98,7 +93,15 @@ class PaginatorView(View):
             await interaction.response.defer()  # No action for the final view
         self.stop()  # Stop the current view
 
-@bot.tree.command(name="shakehelp", description="アライトの基礎的なシェイクのやり方を教えます")
+
+
+@bot.event
+async def on_ready():
+    await tree.sync()
+    print("Botが正常にログインしました")
+
+
+@tree.command(name="shakehelp", description="アライトの基礎的なシェイクのやり方を教えます")
 async def book(interaction: discord.Interaction):
     pages = [
         "**ピンチ・バルジを使った波紋みたいなシェイク**\nイメージGIF\nhttps://i.ibb.co/x6hYY4d/1130-2-Trim.gif",
@@ -170,6 +173,8 @@ async def book(interaction: discord.Interaction):
     view = PaginatorView(pages, next_pages_provider=get_next_pages)
     embed = view.create_embed()
     await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+app = Flask(__name__)
 
 @app.route('/')
 def home():
