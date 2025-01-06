@@ -2,8 +2,11 @@ import discord
 from discord.ext import commands
 from discord.ui import View, Button
 from discord import app_commands
+from flask import Flask, request
+import threading
 import os
 
+# Discord bot setup
 intents = discord.Intents.all()
 bot = discord.Client(intents=intents)
 tree = app_commands.CommandTree(bot)
@@ -11,11 +14,14 @@ tree = app_commands.CommandTree(bot)
 @bot.event
 async def on_ready():
     await bot.tree.sync()
-    print(f"Logged in as {bot.user}")
+    print(f"{bot.user}の起動が完了しました")
 
 @tree.command(name="avatar", description="このbotのアイコンを貼ります。")
 async def avatar(interaction: discord.Interaction):
     await interaction.response.send_message("https://i.imgur.com/dU9gpoh.jpeg")
+
+# Flask setup for the web server
+app = Flask(__name__)
 
 
 class PaginatorView(View):
@@ -92,14 +98,6 @@ class PaginatorView(View):
             await interaction.response.defer()  # No action for the final view
         self.stop()  # Stop the current view
 
-
-
-@bot.event
-async def on_ready():
-    await tree.sync()
-    print("Botが正常にログインしました")
-
-
 @tree.command(name="shakehelp", description="アライトの基礎的なシェイクのやり方を教えます")
 async def book(interaction: discord.Interaction):
     pages = [
@@ -173,6 +171,21 @@ async def book(interaction: discord.Interaction):
     embed = view.create_embed()
     await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8000))  # Set default port to 8000
-    bot.run(os.getenv("TOKEN"), port=port)
+@app.route('/')
+def home():
+    return "The bot's web server is running!"
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    data = request.json
+    print(f"Received webhook data: {data}")
+    return "Webhook received!", 200
+
+def run_flask():
+    app.run(host="0.0.0.0", port=5000)
+
+# Run Flask in a separate thread
+flask_thread = threading.Thread(target=run_flask)
+flask_thread.start()
+
+bot.run(os.getenv("TOKEN"))
