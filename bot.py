@@ -17,10 +17,6 @@ async def on_ready():
 async def avatar(interaction: discord.Interaction):
     await interaction.response.send_message("https://i.imgur.com/dU9gpoh.jpeg")
 
-if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8000))  # Set default port to 8000
-    bot.run(os.getenv("TOKEN"), port=port)
-
 
 class PaginatorView(View):
     def __init__(self, pages, next_pages_provider=None, is_final_view=False):
@@ -177,4 +173,6 @@ async def book(interaction: discord.Interaction):
     embed = view.create_embed()
     await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-bot.run(os.getenv("TOKEN"))
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8000))  # Set default port to 8000
+    bot.run(os.getenv("TOKEN"), port=port)
